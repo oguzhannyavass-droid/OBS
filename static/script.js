@@ -471,20 +471,26 @@ async function initStudentDashboard() {
 
     if(elEnrolled) elEnrolled.textContent = enrollments.length;
 
-    let totalFinal = 0;
-    let finalCount = 0;
+    const gradePoints = {
+        'AA': 4.0, 'BA': 3.5, 'BB': 3.0, 'CB': 2.5,
+        'CC': 2.0, 'DC': 1.5, 'DD': 1.0, 'FD': 0.5, 'FF': 0.0
+    };
+
+    let totalPoints = 0;
+    let gradedCoursesCount = 0;
+    
     enrollments.forEach(e => {
-        if(e.final !== null) {
-            totalFinal += e.final;
-            finalCount++;
+        if(e.letter && gradePoints[e.letter] !== undefined) {
+            totalPoints += gradePoints[e.letter];
+            gradedCoursesCount++;
         }
     });
     
     if(elAvg) {
-        elAvg.textContent = finalCount > 0 ? (totalFinal / finalCount).toFixed(1) : '-';
+        elAvg.textContent = gradedCoursesCount > 0 ? (totalPoints / gradedCoursesCount).toFixed(2) : '-';
     }
     if(elCompleted) {
-        elCompleted.textContent = finalCount;
+        elCompleted.textContent = gradedCoursesCount;
     }
 
     if(enrollments.length === 0) {
