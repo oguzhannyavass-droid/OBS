@@ -204,6 +204,9 @@ async function loadUsers() {
                 <td><strong>${u.name}</strong></td>
                 <td>${u.username}</td>
                 <td><span style="background:rgba(99,102,241,0.1);color:var(--primary-color);padding:4px 8px;border-radius:6px;font-size:0.85em;font-weight:600;">${u.role}</span></td>
+                <td>
+                    <button class="btn btn-outline btn-sm" style="color:#ef4444; border-color:rgba(239, 68, 68, 0.3);" onclick="deleteUser(${u.id}, '${u.name}')">🗑️ Sil</button>
+                </td>
             </tr>
         `).join('');
     }, 50);
@@ -224,6 +227,9 @@ async function loadCourses() {
                 <td>${c.id}</td>
                 <td><strong>${c.name}</strong></td>
                 <td>${c.instructor_name}</td>
+                <td>
+                    <button class="btn btn-outline btn-sm" style="color:#ef4444; border-color:rgba(239, 68, 68, 0.3);" onclick="deleteCourse(${c.id}, '${c.name}')">🗑️ Sil</button>
+                </td>
             </tr>
         `).join('');
     }, 100);
@@ -250,6 +256,34 @@ async function loadCoursesToSelect() {
     if(select) select.innerHTML = '<option value="" disabled selected>— Ders seçiniz —</option>' + courses.map(c => `<option value="${c.id}">${c.code ? c.code + ' - ' : ''}${c.name}</option>`).join('');
 }
 
+async function deleteUser(id, name) {
+    if(!confirm(`'${name}' isimli kullanıcıyı tamamen silmek istediğinize emin misiniz?\n(Bu işlem kullanıcının tüm kayıtlarını silecektir!)`)) return;
+    
+    const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if(data.success) {
+        showToast('Kullanıcı başarıyla silindi.', 'success');
+        loadUsers();
+        loadAcademiciansToSelect();
+        loadStudentsToSelect();
+    } else {
+        showToast(data.message || 'Hata oluştu.', 'error');
+    }
+}
+
+async function deleteCourse(id, name) {
+    if(!confirm(`'${name}' dersini silmek istediğinize emin misiniz?\n(Derse kayıtlı tüm öğrencilerin notları da silinecektir!)`)) return;
+    
+    const res = await fetch(`/api/admin/courses/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if(data.success) {
+        showToast('Ders başarıyla silindi.', 'success');
+        loadCourses();
+        loadCoursesToSelect();
+    } else {
+        showToast(data.message || 'Hata oluştu.', 'error');
+    }
+}
 
 // Academician Dashboard Init
 async function initAcademicianDashboard() {

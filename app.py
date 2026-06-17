@@ -100,6 +100,31 @@ def manage_users():
     users = supabase.table('users').select('*').execute().data
     return jsonify([{'id': u['id'], 'username': u['username'], 'role': u['role'], 'name': u['name']} for u in users])
 
+@app.route('/api/admin/users/<int:user_id>', methods=['DELETE'])
+@login_required('admin')
+def delete_user(user_id):
+    if user_id == session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Kendinizi silemezsiniz.'}), 400
+        
+    user_res = supabase.table('users').select('role').eq('id', user_id).execute()
+    if not user_res.data:
+        return jsonify({'success': False, 'message': 'Kullanıcı bulunamadı.'}), 404
+        
+    role = user_res.data[0]['role']
+    try:
+        if role == 'student':
+            supabase.table('enrollments').delete().eq('student_id', user_id).execute()
+        elif role == 'academician':
+            courses = supabase.table('courses').select('id').eq('instructor_id', user_id).execute().data
+            for c in courses:
+                supabase.table('enrollments').delete().eq('course_id', c['id']).execute()
+            supabase.table('courses').delete().eq('instructor_id', user_id).execute()
+            
+        supabase.table('users').delete().eq('id', user_id).execute()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 @app.route('/api/admin/courses', methods=['GET', 'POST'])
 @login_required('admin')
 def manage_courses():
@@ -124,6 +149,16 @@ def manage_courses():
         'instructor_id': c['instructor_id'], 
         'instructor_name': inst_map.get(c['instructor_id'], 'Bilinmiyor')
     } for c in courses])
+
+@app.route('/api/admin/courses/<int:course_id>', methods=['DELETE'])
+@login_required('admin')
+def delete_course(course_id):
+    try:
+        supabase.table('enrollments').delete().eq('course_id', course_id).execute()
+        supabase.table('courses').delete().eq('id', course_id).execute()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/admin/academicians')
 @login_required('admin')
