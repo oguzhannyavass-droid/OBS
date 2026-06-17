@@ -455,8 +455,10 @@
             <div class="nav-brand-icon">🎓</div>
             OBS Öğrenci
         </div>
+
         <div class="nav-user">
-            <span>Hoşgeldiniz, {{ name }}</span>
+            <button class="theme-toggle" id="themeToggle" title="Temayı Değiştir">☀️</button>
+            <span class="welcome-badge">Hoşgeldiniz, {{ name }}</span>
             <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
         </div>
     </nav>
@@ -504,6 +506,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
+                            <th>Ders Kodu</th>
                             <th>Ders Adı</th>
                             <th>Akademisyen</th>
                             <th>Devamsızlık</th>

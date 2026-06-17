@@ -1,3 +1,27 @@
+// Theme Toggle Logic
+function initThemeToggle() {
+    const toggleBtn = document.getElementById('themeToggle');
+    if(!toggleBtn) return;
+    
+    // Check local storage or system preference
+    const savedTheme = localStorage.getItem('obs_theme');
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-mode');
+        toggleBtn.textContent = '🌙';
+    } else {
+        document.documentElement.classList.remove('light-mode');
+        toggleBtn.textContent = '☀️';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        document.documentElement.classList.toggle('light-mode');
+        const isLight = document.documentElement.classList.contains('light-mode');
+        localStorage.setItem('obs_theme', isLight ? 'light' : 'dark');
+        toggleBtn.textContent = isLight ? '🌙' : '☀️';
+    });
+}
+document.addEventListener('DOMContentLoaded', initThemeToggle);
+
 // Custom Toast Notification System
 function showToast(message, type = 'success') {
     let container = document.getElementById('toast-container');
@@ -86,6 +110,8 @@ async function initAdminDashboard() {
     loadUsers();
     loadCourses();
     loadAcademiciansToSelect();
+    loadStudentsToSelect();
+    loadCoursesToSelect();
 
     document.getElementById('addUserForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -112,21 +138,45 @@ async function initAdminDashboard() {
 
     document.getElementById('addCourseForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const code = document.getElementById('newCourseCode').value;
         const name = document.getElementById('newCourseName').value;
         const instructor_id = document.getElementById('courseInstructor').value;
 
         const res = await fetch('/api/admin/courses', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, instructor_id })
+            body: JSON.stringify({ code, name, instructor_id })
         });
         const data = await res.json();
         if (data.success) {
             showToast('Ders başarıyla eklendi.', 'success');
             e.target.reset();
             loadCourses();
+            loadCoursesToSelect();
         }
     });
+
+    const enrollForm = document.getElementById('enrollStudentForm');
+    if(enrollForm) {
+        enrollForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const student_id = document.getElementById('enrollStudent').value;
+            const course_id = document.getElementById('enrollCourse').value;
+
+            const res = await fetch('/api/admin/enroll', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ student_id, course_id })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast('Öğrenci derse başarıyla kaydedildi.', 'success');
+                e.target.reset();
+            } else {
+                showToast(data.message, 'error');
+            }
+        });
+    }
 }
 
 async function loadUsers() {
@@ -183,7 +233,21 @@ async function loadAcademiciansToSelect() {
     const res = await fetch('/api/admin/academicians');
     const academicians = await res.json();
     const select = document.getElementById('courseInstructor');
-    select.innerHTML = academicians.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+    if(select) select.innerHTML = '<option value="" disabled selected>— Akademisyen seçiniz —</option>' + academicians.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+}
+
+async function loadStudentsToSelect() {
+    const res = await fetch('/api/admin/students');
+    const students = await res.json();
+    const select = document.getElementById('enrollStudent');
+    if(select) select.innerHTML = '<option value="" disabled selected>— Öğrenci seçiniz —</option>' + students.map(s => `<option value="${s.id}">${s.name} (${s.username})</option>`).join('');
+}
+
+async function loadCoursesToSelect() {
+    const res = await fetch('/api/admin/courses');
+    const courses = await res.json();
+    const select = document.getElementById('enrollCourse');
+    if(select) select.innerHTML = '<option value="" disabled selected>— Ders seçiniz —</option>' + courses.map(c => `<option value="${c.id}">${c.code ? c.code + ' - ' : ''}${c.name}</option>`).join('');
 }
 
 
@@ -377,6 +441,7 @@ async function viewStudentProfile(studentId) {
     
     tbody.innerHTML = data.enrollments.map(e => `
         <tr>
+            <td><strong>${e.course_code || '-'}</strong></td>
             <td><strong>${e.course_name}</strong></td>
             <td><span style="background:rgba(99,102,241,0.1);color:var(--primary-color);padding:4px 8px;border-radius:4px;">${formatGrade(e.attendance)}</span></td>
             <td>${formatGrade(e.midterm)}</td>
@@ -430,6 +495,7 @@ async function initStudentDashboard() {
     setTimeout(() => {
         tbody.innerHTML = enrollments.map(e => `
             <tr>
+                <td><strong>${e.course_code || '-'}</strong></td>
                 <td><strong>${e.course_name}</strong></td>
                 <td>${e.instructor_name}</td>
                 <td><span style="background:rgba(99,102,241,0.1);color:var(--primary-color);padding:4px 8px;border-radius:4px;font-weight:600;">${formatGrade(e.attendance)}</span></td>

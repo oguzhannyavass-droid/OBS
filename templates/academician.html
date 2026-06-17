@@ -17,8 +17,10 @@
             <span class="nav-icon">👨‍🏫</span>
             <span>OBS Akademisyen</span>
         </div>
+
         <div class="nav-user">
-            <span>Hoşgeldiniz, {{ name }}</span>
+            <button class="theme-toggle" id="themeToggle" title="Temayı Değiştir">☀️</button>
+            <span class="welcome-badge">Hoşgeldiniz, {{ name }}</span>
             <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
         </div>
     </nav>
@@ -72,7 +74,7 @@
                     <thead>
                         <tr>
                             <th>Öğrenci Adı</th>
-                            <th>Devamsızlık</th>
+                            <th>D.Sızlık</th>
                             <th>Vize</th>
                             <th>Final</th>
                             <th>Proje</th>
@@ -98,8 +100,9 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Ders</th>
-                            <th>Devamsızlık</th>
+                            <th>Ders Kodu</th>
+                            <th>Ders Adı</th>
+                            <th>D.Sızlık</th>
                             <th>Vize</th>
                             <th>Final</th>
                             <th>Proje</th>

@@ -131,6 +131,26 @@ def get_academicians():
     acads = supabase.table('users').select('id, name').eq('role', 'academician').execute().data
     return jsonify(acads)
 
+@app.route('/api/admin/students')
+@login_required('admin')
+def get_students():
+    students = supabase.table('users').select('id, name, username').eq('role', 'student').execute().data
+    return jsonify(students)
+
+@app.route('/api/admin/enroll', methods=['POST'])
+@login_required('admin')
+def enroll_student():
+    data = request.get_json()
+    existing = supabase.table('enrollments').select('*').eq('student_id', data['student_id']).eq('course_id', data['course_id']).execute().data
+    if existing:
+        return jsonify({'success': False, 'message': 'Öğrenci zaten bu derse kayıtlı.'}), 400
+    
+    supabase.table('enrollments').insert({
+        'student_id': data['student_id'],
+        'course_id': data['course_id']
+    }).execute()
+    return jsonify({'success': True})
+
 # ----- ACADEMICIAN ROUTES -----
 @app.route('/academician')
 @login_required('academician')
@@ -226,7 +246,7 @@ def view_student(student_id):
     student = student_res.data[0]
     
     course_ids = [e['course_id'] for e in enrollments]
-    courses = supabase.table('courses').select('id, name, grades_published').in_('id', course_ids).execute().data if course_ids else []
+    courses = supabase.table('courses').select('id, name, code, grades_published').in_('id', course_ids).execute().data if course_ids else []
     course_map = {c['id']: c for c in courses}
     
     student_data = {
