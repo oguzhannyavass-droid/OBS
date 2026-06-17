@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öğrenci Paneli - OBS</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">OBS Öğrenci</div>
+        <div class="nav-user">
+            <span>Hoşgeldiniz, {{ name }}</span>
+            <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
+        </div>
+    </nav>
+    <main class="container">
+        <!-- Profil Başlığı -->
+        <div class="profile-header">
+            <div class="profile-avatar">👨‍🎓</div>
+            <div class="profile-info">
+                <h2>Öğrenci Profili</h2>
+                <p>{{ name }}</p>
+            </div>
+        </div>
+
+        <!-- Öğrenci İstatistik Kartları -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📖</div>
+                <div class="stat-info">
+                    <h3>Kayıtlı Dersler</h3>
+                    <p id="statEnrolledCourses">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-info">
+                    <h3>Genel Final Ortalaması</h3>
+                    <p id="statAverageGrade">-</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-info">
+                    <h3>Tamamlanan</h3>
+                    <p id="statCompleted">-</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Aldığım Dersler ve Not Durumu</h2>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ders Adı</th>
+                            <th>Akademisyen</th>
+                            <th>Devamsızlık</th>
+                            <th>Vize</th>
+                            <th>Final</th>
+                            <th>Proje</th>
+                            <th>Sunum</th>
+                            <th>Harf Notu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentGradesList"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <script src="/static/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', initStudentDashboard);
+    </script>
+</body>
+</html>

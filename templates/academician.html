@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akademisyen Paneli - OBS</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">OBS Akademisyen</div>
+        <div class="nav-user">
+            <span>Hoşgeldiniz, {{ name }}</span>
+            <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
+        </div>
+    </nav>
+    <main class="container">
+        <!-- Akademisyen İstatistik Kartları -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📚</div>
+                <div class="stat-info">
+                    <h3>Verdiğim Dersler</h3>
+                    <p id="statMyCourses">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-info">
+                    <h3>Not Bekleyen</h3>
+                    <p id="statPendingGrades">Hazır</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Verdiğim Dersler</h2>
+            <div class="course-list" id="academicianCourses">
+                <!-- Dinamik Doldurulacak -->
+            </div>
+        </div>
+
+        <div id="courseDetails" class="card mt-2 hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                <h2 id="selectedCourseName" style="border:none; padding:0; margin:0;">Ders Detayı</h2>
+                <button id="publishGradesBtn" class="btn btn-outline btn-sm hidden" onclick="publishCourseGrades()">Notları İlan Et</button>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Öğrenci Adı</th>
+                            <th>Devamsızlık</th>
+                            <th>Vize</th>
+                            <th>Final</th>
+                            <th>Proje</th>
+                            <th>Sunum</th>
+                            <th>Harf</th>
+                            <th>İşlem</th>
+                            <th>Profil</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courseStudentsList"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for student profile -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalStudentName">Öğrenci Profili</h2>
+            <div class="table-responsive mt-2">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ders</th>
+                            <th>Devamsızlık</th>
+                            <th>Vize</th>
+                            <th>Final</th>
+                            <th>Proje</th>
+                            <th>Sunum</th>
+                            <th>Harf</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalStudentGrades"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', initAcademicianDashboard);
+    </script>
+</body>
+</html>
