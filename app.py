@@ -106,6 +106,7 @@ def manage_courses():
     if request.method == 'POST':
         data = request.get_json()
         supabase.table('courses').insert({
+            'code': data.get('code', ''),
             'name': data['name'],
             'instructor_id': data['instructor_id']
         }).execute()
@@ -117,7 +118,8 @@ def manage_courses():
     inst_map = {i['id']: i['name'] for i in instructors}
     
     return jsonify([{
-        'id': c['id'], 
+        'id': c['id'],
+        'code': c.get('code', ''),
         'name': c['name'], 
         'instructor_id': c['instructor_id'], 
         'instructor_name': inst_map.get(c['instructor_id'], 'Bilinmiyor')
@@ -139,7 +141,7 @@ def academician_dashboard():
 @login_required('academician')
 def academician_courses():
     courses = supabase.table('courses').select('*').eq('instructor_id', session['user_id']).execute().data
-    return jsonify([{'id': c['id'], 'name': c['name'], 'published': c.get('grades_published', False)} for c in courses])
+    return jsonify([{'id': c['id'], 'code': c.get('code', ''), 'name': c['name'], 'published': c.get('grades_published', False)} for c in courses])
 
 @app.route('/api/academician/course/<int:course_id>/publish', methods=['POST'])
 @login_required('academician')
@@ -262,6 +264,7 @@ def student_enrollments():
     
     return jsonify([{
         'course_id': e['course_id'],
+        'course_code': course_map.get(e['course_id'], {}).get('code', ''),
         'course_name': course_map.get(e['course_id'], {}).get('name', 'Bilinmiyor'),
         'instructor_name': inst_map.get(course_map.get(e['course_id'], {}).get('instructor_id'), 'Bilinmiyor'),
         'attendance': e.get('attendance', 0),
@@ -269,7 +272,7 @@ def student_enrollments():
         'final': e.get('final'),
         'project': e.get('project'),
         'presentation': e.get('presentation'),
-        'letter': get_letter_grade(e.get('midterm'), e.get('final'), e.get('project'), e.get('presentation')) if course_map.get(e['course_id'], {}).get('grades_published') else 'İlan Edilmedi'
+        'letter': get_letter_grade(e.get('midterm'), e.get('final'), e.get('project'), e.get('presentation')) if course_map.get(e['course_id'], {}).get('grades_published') else 'Ilan Edilmedi'
     } for e in enrollments])
 
 if __name__ == '__main__':

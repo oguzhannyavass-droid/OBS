@@ -3,53 +3,501 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Öğrenci Paneli - OBS</title>
+    <title>OBS Öğrenci Paneli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset & Base ─────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-border-hover: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-indigo: #818cf8;
+            --accent-indigo-glow: rgba(129, 140, 248, 0.25);
+            --accent-emerald: #34d399;
+            --accent-emerald-glow: rgba(52, 211, 153, 0.25);
+            --accent-amber: #fbbf24;
+            --accent-amber-glow: rgba(251, 191, 36, 0.25);
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.3);
+            --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 20% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(52, 211, 153, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 50% at 50% 50%, rgba(251, 191, 36, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Navbar ────────────────────────────────────────── */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            height: 70px;
+            background: rgba(10, 14, 26, 0.75);
+            backdrop-filter: blur(20px) saturate(1.4);
+            -webkit-backdrop-filter: blur(20px) saturate(1.4);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .nav-brand-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent-indigo), #6366f1);
+            font-size: 1.15rem;
+            box-shadow: 0 0 20px var(--accent-indigo-glow);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-user span {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.15rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition-fast);
+            letter-spacing: 0.01em;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-1px);
+        }
+
+        /* ── Main Container ───────────────────────────────── */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        /* ── Profile Header ───────────────────────────────── */
+        .profile-header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            overflow: hidden;
+            animation: fadeSlideUp 0.6s ease-out both;
+        }
+
+        .profile-header .decorative-glow {
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: pulseGlow 6s ease-in-out infinite alternate;
+        }
+
+        .profile-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(129, 140, 248, 0.08));
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .profile-info {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-info h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.15rem;
+        }
+
+        .profile-info p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* ── Stats Grid ───────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            position: relative;
+            padding: 1.6rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: all var(--transition-smooth);
+            overflow: hidden;
+            animation: fadeSlideUp 0.6s ease-out both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--glass-border-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .stat-card.accent-indigo::after  { background: linear-gradient(90deg, var(--accent-indigo), transparent); }
+        .stat-card.accent-emerald::after { background: linear-gradient(90deg, var(--accent-emerald), transparent); }
+        .stat-card.accent-amber::after   { background: linear-gradient(90deg, var(--accent-amber), transparent); }
+
+        .stat-card .stat-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card.accent-indigo .stat-icon {
+            background: rgba(129, 140, 248, 0.12);
+            box-shadow: 0 0 20px var(--accent-indigo-glow);
+        }
+        .stat-card.accent-emerald .stat-icon {
+            background: rgba(52, 211, 153, 0.12);
+            box-shadow: 0 0 20px var(--accent-emerald-glow);
+        }
+        .stat-card.accent-amber .stat-icon {
+            background: rgba(251, 191, 36, 0.12);
+            box-shadow: 0 0 20px var(--accent-amber-glow);
+        }
+
+        .stat-card .stat-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-card .stat-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .stat-card.accent-indigo .stat-value  { color: var(--accent-indigo); }
+        .stat-card.accent-emerald .stat-value { color: var(--accent-emerald); }
+        .stat-card.accent-amber .stat-value   { color: var(--accent-amber); }
+
+        /* ── Card / Table Section ─────────────────────────── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+            animation: fadeSlideUp 0.6s ease-out 0.35s both;
+        }
+
+        .card h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding: 1.5rem 2rem 0;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            padding: 1.25rem 1.5rem 1.5rem;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-responsive::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.875rem;
+        }
+
+        .data-table thead th {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--glass-border);
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            background: rgba(17, 24, 39, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .data-table tbody tr {
+            transition: background var(--transition-fast);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .data-table tbody td {
+            padding: 0.8rem 1rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            white-space: nowrap;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ── Footer ───────────────────────────────────────── */
+        .footer {
+            text-align: center;
+            padding: 2.5rem 1rem 2rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Animations ───────────────────────────────────── */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0%   { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 1;   transform: scale(1.15); }
+        }
+
+        /* ── Responsive ───────────────────────────────────── */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 1rem;
+                height: 60px;
+            }
+            .nav-brand { font-size: 1.1rem; }
+            .nav-user span { display: none; }
+
+            .main-container { padding: 1.25rem 1rem 2rem; }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 0.85rem;
+            }
+
+            .card h2 { padding: 1.25rem 1.25rem 0; font-size: 1.05rem; }
+            .table-responsive { padding: 1rem; }
+            .data-table { font-size: 0.8rem; }
+            .data-table thead th,
+            .data-table tbody td { padding: 0.65rem 0.75rem; }
+        }
+
+        @media (max-width: 480px) {
+            .stat-card .stat-value { font-size: 1.5rem; }
+            .profile-avatar { width: 56px; height: 56px; font-size: 1.6rem; }
+            .profile-info h2 { font-size: 1.25rem; }
+        }
+    </style>
 </head>
 <body>
+
+    <!-- ─── Navbar ─────────────────────────────────────── -->
     <nav class="navbar">
-        <div class="nav-brand">OBS Öğrenci</div>
+        <div class="nav-brand">
+            <div class="nav-brand-icon">🎓</div>
+            OBS Öğrenci
+        </div>
         <div class="nav-user">
             <span>Hoşgeldiniz, {{ name }}</span>
             <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
         </div>
     </nav>
-    <main class="container">
-        <!-- Profil Başlığı -->
+
+    <!-- ─── Main Container ─────────────────────────────── -->
+    <div class="main-container">
+
+        <!-- Profile Header -->
         <div class="profile-header">
             <div class="profile-avatar">👨‍🎓</div>
             <div class="profile-info">
                 <h2>Öğrenci Profili</h2>
                 <p>{{ name }}</p>
             </div>
+            <div class="decorative-glow"></div>
         </div>
 
-        <!-- Öğrenci İstatistik Kartları -->
+        <!-- Stats Grid -->
         <div class="stats-grid">
-            <div class="stat-card">
+
+            <div class="stat-card accent-indigo">
                 <div class="stat-icon">📖</div>
-                <div class="stat-info">
-                    <h3>Kayıtlı Dersler</h3>
-                    <p id="statEnrolledCourses">0</p>
-                </div>
+                <span class="stat-label">Kayıtlı Dersler</span>
+                <div class="stat-value" id="statEnrolledCourses">—</div>
             </div>
-            <div class="stat-card">
+
+            <div class="stat-card accent-emerald">
                 <div class="stat-icon">📈</div>
-                <div class="stat-info">
-                    <h3>Genel Final Ortalaması</h3>
-                    <p id="statAverageGrade">-</p>
-                </div>
+                <span class="stat-label">Genel Final Ortalaması</span>
+                <div class="stat-value" id="statAverageGrade">—</div>
             </div>
-            <div class="stat-card">
+
+            <div class="stat-card accent-amber">
                 <div class="stat-icon">🎯</div>
-                <div class="stat-info">
-                    <h3>Tamamlanan</h3>
-                    <p id="statCompleted">-</p>
-                </div>
+                <span class="stat-label">Tamamlanan</span>
+                <div class="stat-value" id="statCompleted">—</div>
             </div>
+
         </div>
 
+        <!-- Grades Table Card -->
         <div class="card">
             <h2>Aldığım Dersler ve Not Durumu</h2>
             <div class="table-responsive">
@@ -66,14 +514,25 @@
                             <th>Harf Notu</th>
                         </tr>
                     </thead>
-                    <tbody id="studentGradesList"></tbody>
+                    <tbody id="studentGradesList">
+                        <!-- Populated dynamically -->
+                    </tbody>
                 </table>
             </div>
         </div>
-    </main>
+
+    </div>
+
+    <!-- ─── Footer ─────────────────────────────────────── -->
+    <footer>
+        <div class="footer">© 2026 OBS Öğrenci Bilgi Sistemi</div>
+    </footer>
+
+    <!-- ─── Scripts ────────────────────────────────────── -->
     <script src="/static/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', initStudentDashboard);
     </script>
+
 </body>
 </html>

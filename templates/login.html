@@ -3,29 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OBS Giriş</title>
+    <title>OBS - Giriş</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset & Base ─────────────────────────────────── */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .login-body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── Ambient background glow ──────────────────────── */
+        .login-body::before {
+            content: '';
+            position: fixed;
+            top: -40%;
+            left: -20%;
+            width: 80vw;
+            height: 80vw;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            animation: ambientDrift 18s ease-in-out infinite alternate;
+        }
+
+        .login-body::after {
+            content: '';
+            position: fixed;
+            bottom: -30%;
+            right: -15%;
+            width: 70vw;
+            height: 70vw;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            animation: ambientDrift 22s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes ambientDrift {
+            0%   { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, -40px) scale(1.1); }
+        }
+
+        /* ── Floating Shapes ──────────────────────────────── */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.07;
+            filter: blur(1px);
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 320px;
+            height: 320px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            top: -80px;
+            left: -100px;
+            animation: floatShape 14s ease-in-out infinite alternate;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            top: 15%;
+            right: -60px;
+            animation: floatShape 18s ease-in-out infinite alternate-reverse;
+            animation-delay: -3s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 160px;
+            height: 160px;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            bottom: 10%;
+            left: 5%;
+            animation: floatShape 20s ease-in-out infinite alternate;
+            animation-delay: -7s;
+        }
+
+        .floating-shape:nth-child(4) {
+            width: 240px;
+            height: 240px;
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            bottom: -100px;
+            right: 10%;
+            animation: floatShape 16s ease-in-out infinite alternate-reverse;
+            animation-delay: -5s;
+        }
+
+        .floating-shape:nth-child(5) {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            top: 50%;
+            left: 15%;
+            animation: floatShape 12s ease-in-out infinite alternate;
+            animation-delay: -2s;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+
+        .floating-shape:nth-child(6) {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            top: 5%;
+            left: 45%;
+            animation: floatShape 24s ease-in-out infinite alternate-reverse;
+            animation-delay: -10s;
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        }
+
+        @keyframes floatShape {
+            0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+            33%  { transform: translate(30px, -25px) rotate(60deg) scale(1.05); }
+            66%  { transform: translate(-20px, 15px) rotate(120deg) scale(0.95); }
+            100% { transform: translate(15px, -35px) rotate(180deg) scale(1.02); }
+        }
+
+        /* ── Login Container (Glassmorphism) ──────────────── */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 48px 40px 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(24px) saturate(1.4);
+            -webkit-backdrop-filter: blur(24px) saturate(1.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 1px 0 rgba(255, 255, 255, 0.1) inset;
+            animation: containerReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes containerReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+                filter: blur(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* ── Logo / Icon Area ─────────────────────────────── */
+        .login-logo {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            border-radius: 22px;
+            box-shadow:
+                0 8px 24px rgba(99, 102, 241, 0.35),
+                0 0 0 4px rgba(99, 102, 241, 0.1);
+            animation: logoPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .login-logo::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 26px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.4));
+            z-index: -1;
+            filter: blur(12px);
+            opacity: 0.6;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35), 0 0 0 4px rgba(99, 102, 241, 0.1); }
+            50%      { transform: scale(1.04); box-shadow: 0 12px 32px rgba(99, 102, 241, 0.45), 0 0 0 6px rgba(99, 102, 241, 0.15); }
+        }
+
+        /* ── Title & Subtitle ─────────────────────────────── */
+        .login-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        /* ── Version Badge ────────────────────────────────── */
+        .version-badge {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .version-badge span {
+            display: inline-block;
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #a78bfa;
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+            border-radius: 50px;
+        }
+
+        /* ── Form ─────────────────────────────────────────── */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.2px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            font-size: 16px;
+            z-index: 2;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .input-wrapper input:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .input-wrapper input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12), 0 0 20px rgba(99, 102, 241, 0.08);
+        }
+
+        .input-wrapper input:focus ~ .input-icon,
+        .input-wrapper:has(input:focus) .input-icon {
+            opacity: 1;
+        }
+
+        /* ── Error Message ────────────────────────────────── */
+        .error-message {
+            font-size: 13px;
+            color: #f87171;
+            text-align: center;
+            padding: 10px 16px;
+            background: rgba(248, 113, 113, 0.08);
+            border: 1px solid rgba(248, 113, 113, 0.15);
+            border-radius: 10px;
+            display: none;
+            animation: shakeError 0.4s ease;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%      { transform: translateX(-6px); }
+            40%      { transform: translateX(6px); }
+            60%      { transform: translateX(-4px); }
+            80%      { transform: translateX(4px); }
+        }
+
+        /* ── Submit Button ────────────────────────────────── */
+        .btn {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            color: #ffffff;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50%      { background-position: 100% 50%; }
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4), 0 0 40px rgba(139, 92, 246, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 15px 24px;
+            border-radius: 14px;
+        }
+
+        /* ── Footer ───────────────────────────────────────── */
+        .login-footer {
+            text-align: center;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .login-footer p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.3px;
+        }
+
+        /* ── Responsive ───────────────────────────────────── */
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 16px;
+                padding: 36px 24px 32px;
+                border-radius: 22px;
+            }
+
+            .login-title {
+                font-size: 24px;
+            }
+
+            .login-logo {
+                width: 64px;
+                height: 64px;
+                font-size: 30px;
+                border-radius: 18px;
+            }
+        }
+    </style>
 </head>
 <body class="login-body">
+
+    <!-- Floating Decorative Shapes -->
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+
+    <!-- Login Container -->
     <div class="login-container">
-        <div class="login-header">
-            <h1>Öğrenci Bilgi Sistemi</h1>
-            <p>Sisteme giriş yapmak için bilgilerinizi giriniz</p>
+
+        <!-- Logo / Icon -->
+        <div class="login-logo">🎓</div>
+
+        <!-- Title -->
+        <h1 class="login-title">Öğrenci Bilgi Sistemi</h1>
+
+        <!-- Subtitle -->
+        <p class="login-subtitle">Sisteme giriş yapmak için bilgilerinizi giriniz</p>
+
+        <!-- Version Badge -->
+        <div class="version-badge">
+            <span>v2.0</span>
         </div>
+
+        <!-- Login Form -->
         <form id="loginForm" class="login-form">
+
+            <!-- Username -->
             <div class="input-group">
                 <label for="username">Kullanıcı Adı</label>
-                <input type="text" id="username" name="username" required placeholder="Kullanıcı adınız">
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" name="username" placeholder="Kullanıcı adınızı giriniz" autocomplete="username" required>
+                </div>
             </div>
+
+            <!-- Password -->
             <div class="input-group">
                 <label for="password">Şifre</label>
-                <input type="password" id="password" name="password" required placeholder="Şifreniz">
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" placeholder="Şifrenizi giriniz" autocomplete="current-password" required>
+                </div>
             </div>
+
+            <!-- Error Message -->
             <div id="loginError" class="error-message"></div>
+
+            <!-- Submit Button -->
             <button type="submit" class="btn btn-primary btn-block">Giriş Yap</button>
+
         </form>
+
+        <!-- Footer -->
+        <div class="login-footer">
+            <p>© 2026 OBS - Tüm hakları saklıdır.</p>
+        </div>
+
     </div>
+
     <script src="/static/script.js"></script>
 </body>
 </html>

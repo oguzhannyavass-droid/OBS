@@ -3,124 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - OBS</title>
+    <title>OBS Admin Paneli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- ═══════════════════ NAVBAR ═══════════════════ -->
     <nav class="navbar">
-        <div class="nav-brand">OBS Admin</div>
+        <div class="nav-brand">
+            <span class="brand-icon">⚙️</span>
+            <span class="brand-text">OBS Admin</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#stats" class="nav-link active">📊 İstatistikler</a>
+            <a href="#users" class="nav-link">👥 Kullanıcılar</a>
+            <a href="#courses" class="nav-link">📚 Dersler</a>
+        </div>
+
         <div class="nav-user">
-            <span>Hoşgeldiniz, {{ name }}</span>
+            <span class="welcome-badge">Hoşgeldiniz, {{ name }}</span>
             <a href="/logout" class="btn btn-outline">Çıkış Yap</a>
         </div>
     </nav>
+
+    <!-- ═══════════════════ MAIN CONTAINER ═══════════════════ -->
     <main class="container">
-        <!-- İstatistik Kartları -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div class="stat-info">
-                    <h3>Toplam Kullanıcı</h3>
-                    <p id="statTotalUsers">0</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">👨‍🎓</div>
-                <div class="stat-info">
-                    <h3>Öğrenciler</h3>
-                    <p id="statTotalStudents">0</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">👨‍🏫</div>
-                <div class="stat-info">
-                    <h3>Akademisyenler</h3>
-                    <p id="statTotalAcademicians">0</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📚</div>
-                <div class="stat-info">
-                    <h3>Açılan Dersler</h3>
-                    <p id="statTotalCourses">0</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="dashboard-grid">
-            <section class="card">
-                <h2>Kullanıcı Ekle</h2>
-                <form id="addUserForm" class="form-grid">
-                    <div class="input-group">
-                        <label>Ad Soyad</label>
-                        <input type="text" id="newUserName" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Kullanıcı Adı</label>
-                        <input type="text" id="newUserUsername" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Şifre</label>
-                        <input type="password" id="newUserPassword" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Rol</label>
-                        <select id="newUserRole">
-                            <option value="student">Öğrenci</option>
-                            <option value="academician">Akademisyen</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Kullanıcı Ekle</button>
-                </form>
-            </section>
-
-            <section class="card">
-                <h2>Ders Ekle</h2>
-                <form id="addCourseForm" class="form-grid">
-                    <div class="input-group">
-                        <label>Ders Adı</label>
-                        <input type="text" id="newCourseName" required>
-                    </div>
-                    <div class="input-group">
-                        <label>Atanacak Akademisyen</label>
-                        <select id="courseInstructor" required>
-                            <!-- Doldurulacak -->
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Ders Ekle</button>
-                </form>
-            </section>
-        </div>
-        
-        <div class="card mt-2">
-            <h2>Kullanıcı Listesi</h2>
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr><th>ID</th><th>Ad Soyad</th><th>Kullanıcı Adı</th><th>Rol</th></tr>
-                    </thead>
-                    <tbody id="usersList"></tbody>
-                </table>
+        <!-- ——— Welcome Banner ——— -->
+        <section class="welcome-banner" id="stats">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Merhaba, <span class="gradient-text">{{ name }}</span> 👋</h1>
+                <p class="welcome-subtitle">Yönetim Paneline Hoş Geldiniz</p>
+                <div class="welcome-date" id="currentDate"></div>
             </div>
-        </div>
-
-        <div class="card mt-2">
-            <h2>Ders Listesi</h2>
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr><th>ID</th><th>Ders Adı</th><th>Akademisyen</th></tr>
-                    </thead>
-                    <tbody id="coursesList"></tbody>
-                </table>
+            <div class="welcome-decoration">
+                <div class="deco-circle deco-circle-1"></div>
+                <div class="deco-circle deco-circle-2"></div>
+                <div class="deco-circle deco-circle-3"></div>
             </div>
-        </div>
+        </section>
+
+        <!-- ——— Stats Grid ——— -->
+        <section class="stats-grid">
+            <!-- Stat 1 — Toplam Kullanıcı -->
+            <div class="stat-card stat-indigo">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">👥</span>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statTotalUsers">—</span>
+                    <span class="stat-label">Toplam Kullanıcı</span>
+                </div>
+                <div class="stat-accent"></div>
+            </div>
+
+            <!-- Stat 2 — Öğrenciler -->
+            <div class="stat-card stat-emerald">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">👨‍🎓</span>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statTotalStudents">—</span>
+                    <span class="stat-label">Öğrenciler</span>
+                </div>
+                <div class="stat-accent"></div>
+            </div>
+
+            <!-- Stat 3 — Akademisyenler -->
+            <div class="stat-card stat-amber">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">👨‍🏫</span>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statTotalAcademicians">—</span>
+                    <span class="stat-label">Akademisyenler</span>
+                </div>
+                <div class="stat-accent"></div>
+            </div>
+
+            <!-- Stat 4 — Açılan Dersler -->
+            <div class="stat-card stat-cyan">
+                <div class="stat-icon-wrap">
+                    <span class="stat-icon">📚</span>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statTotalCourses">—</span>
+                    <span class="stat-label">Açılan Dersler</span>
+                </div>
+                <div class="stat-accent"></div>
+            </div>
+        </section>
+
+        <!-- ——— Dashboard Grid: Forms ——— -->
+        <section class="dashboard-grid">
+
+            <!-- Kullanıcı Ekle Card -->
+            <div class="card card-form">
+                <div class="card-header" style="display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid rgba(99,102,241,0.12); padding-bottom:1rem; margin-bottom:1.5rem;">
+                    <h2 style="border:none; margin:0; padding:0;"><span class="header-icon">🧑‍💼</span> Yeni Kullanıcı Oluştur</h2>
+                    <span style="background:rgba(99,102,241,0.12); color:var(--primary-light); padding:0.3rem 0.8rem; border-radius:20px; font-size:0.75rem; font-weight:600; border:1px solid rgba(99,102,241,0.2);">Yönetici İşlemi</span>
+                </div>
+                <div class="card-body">
+                    <form id="addUserForm" class="form-grid">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                            <div class="input-group">
+                                <label for="newUserName">👤 Ad Soyad</label>
+                                <input type="text" id="newUserName" placeholder="Örn: Mehmet Kaya" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="newUserUsername">📧 Kullanıcı Adı</label>
+                                <input type="text" id="newUserUsername" placeholder="Örn: mehmet.kaya" required>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                            <div class="input-group">
+                                <label for="newUserPassword">🔒 Şifre</label>
+                                <input type="password" id="newUserPassword" placeholder="En az 4 karakter" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="newUserRole">🏷️ Rol Seçimi</label>
+                                <select id="newUserRole" required>
+                                    <option value="" disabled selected>— Rol seçiniz —</option>
+                                    <option value="student">🎓 Öğrenci</option>
+                                    <option value="academician">👨‍🏫 Akademisyen</option>
+                                    <option value="admin">🛡️ Yönetici</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:center; margin-top:0.5rem;">
+                            <button type="submit" class="btn btn-primary" style="flex:1;">
+                                ➕ Kullanıcı Oluştur
+                            </button>
+                            <button type="reset" class="btn btn-outline" style="flex:0.4;">
+                                🔄 Temizle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Ders Ekle Card -->
+            <div class="card card-form">
+                <div class="card-header" style="display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid rgba(99,102,241,0.12); padding-bottom:1rem; margin-bottom:1.5rem;">
+                    <h2 style="border:none; margin:0; padding:0;"><span class="header-icon">📖</span> Yeni Ders Tanımla</h2>
+                    <span style="background:rgba(6,182,212,0.12); color:var(--cyan-light); padding:0.3rem 0.8rem; border-radius:20px; font-size:0.75rem; font-weight:600; border:1px solid rgba(6,182,212,0.2);">Müfredat</span>
+                </div>
+                <div class="card-body">
+                    <form id="addCourseForm" class="form-grid">
+                        <div style="display:grid; grid-template-columns: 0.4fr 1fr; gap:1rem;">
+                            <div class="input-group">
+                                <label for="newCourseCode">🏷️ Ders Kodu</label>
+                                <input type="text" id="newCourseCode" placeholder="Örn: BIL101" required style="text-transform:uppercase; font-weight:700; letter-spacing:0.05em;">
+                            </div>
+                            <div class="input-group">
+                                <label for="newCourseName">📚 Ders Adı</label>
+                                <input type="text" id="newCourseName" placeholder="Örn: Algoritma ve Programlama" required>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label for="courseInstructor">👨‍🏫 Sorumlu Akademisyen</label>
+                            <select id="courseInstructor" required>
+                                <option value="" disabled selected>— Akademisyen seçiniz —</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:center; margin-top:0.5rem;">
+                            <button type="submit" class="btn btn-primary" style="flex:1;">
+                                ➕ Ders Oluştur
+                            </button>
+                            <button type="reset" class="btn btn-outline" style="flex:0.4;">
+                                🔄 Temizle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ——— Kullanıcı Listesi ——— -->
+        <section class="card card-table" id="users">
+            <div class="card-header">
+                <h2><span class="header-icon">👥</span> Kullanıcı Listesi</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ad Soyad</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Rol</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersList">
+                            <!-- Rows populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ——— Ders Listesi ——— -->
+        <section class="card card-table" id="courses">
+            <div class="card-header">
+                <h2><span class="header-icon">📚</span> Ders Listesi</h2>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ders Kodu</th>
+                                <th>Ders Adı</th>
+                                <th>Akademisyen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coursesList">
+                            <!-- Rows populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
     </main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <div class="footer">© 2026 OBS Yönetim Sistemi</div>
+
+    <!-- ═══════════════════ SCRIPTS ═══════════════════ -->
     <script src="/static/script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', initAdminDashboard);
     </script>
+
 </body>
 </html>
